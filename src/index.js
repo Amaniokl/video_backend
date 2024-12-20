@@ -3,7 +3,7 @@ import mongoose, { connect }  from "mongoose";
 import { DB_NAME } from "./constants.js";
 import express from "express"
 import connectDB from "./db/index.js"
-const app=express()
+import {app} from "./app.js"
 
 dotenv.config({
     path: './env'
@@ -21,6 +21,7 @@ connectDB()
         throw error
     })
 })
+
 /*
 ;(async()=>{
     try{

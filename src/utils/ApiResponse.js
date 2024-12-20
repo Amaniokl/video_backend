@@ -7,3 +7,5 @@ class ApiResponse{
         
     }
 }
+
+export {ApiResponse}
