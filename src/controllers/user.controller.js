@@ -102,7 +102,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const { username, password, email } = req.body
 
     //validate username and password
-    if (username === "" || email == "") {
+    if (username === "" && email == "") {
         throw new ApiError(400, "Username or password is required");
     }
 
@@ -125,7 +125,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const {accessToken, refreshToken}=await generateAccessAndRefreshTokens(user._id)
     // console.log("accesstoken       "+accessToken)
     // console.log("                                             ")
-    console.log("refresh           "+refreshToken)
+    // console.log("refresh           "+refreshToken)
     const loggedInUser=await User
     .findById(user._id)
     .select("-password -refreshToken")
@@ -187,7 +187,7 @@ const refreshAccessToken=asyncHandler(async(req,res)=>{
     const incominRefreshToken=req
         .cookies.refreshToken || req.body.refreshToken
     
-    if(incominRefreshToken){
+    if(!incominRefreshToken){
         throw new ApiError(401, "Unauthorized request")
     }
     try {
