@@ -55,4 +55,75 @@ const uploadVideo= asyncHandler(async(req,res)=>{
     )
 })
 
-export {uploadVideo}
+const getVideoById=asyncHandler(async(req,res)=>{
+    const {videoId}=req.params;
+
+    const video=await Video.findById(videoId).lean();
+    
+    if(!video){
+        throw new ApiError(404, "Video not found!!")
+    }
+    console.log(video);
+    res
+    .status(200)
+    .json(new ApiResponse(200, video, "Video by Id"))
+})
+
+const getAllVideos=asyncHandler(async(req,res)=>{
+    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
+
+})
+
+const updateVideoDetails = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
+    const video = await Video.findById(videoId);
+    
+    if (!video) {
+        throw new ApiError(404, "Video not available!!"); 
+    }
+
+    const { title, description } = req.body;
+    if (title === "" || description === "") {
+        throw new ApiError(400, "Title and Description both fields are required"); 
+    }
+
+    const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
+    console.log(thumbnailLocalPath);
+    if (!thumbnailLocalPath) {
+        throw new ApiError(400, "Thumbnail is required");
+    }
+
+    const userId = req.user._id.toString();
+    const videoOwner = video.owner.toString();
+    // console.log(userId, video.owner);
+    if (videoOwner !== userId) {
+        throw new ApiError(403, "You are not authorized to update this video");
+    }
+
+    // Upload thumbnail to Cloudinary
+    const thumbnailCloud = await uploadOnCloudinary(thumbnailLocalPath);
+    if(!thumbnailCloud){
+        new ApiError(500, "Cannot update")
+    }
+    // console.log(thumbnailCloud);
+
+    // Update the video in the database
+    const updatedVideo = await Video.findByIdAndUpdate(
+        videoId,
+        {
+            $set: {
+                thumbnail: thumbnailCloud.url,
+                title: title,
+                description: description
+            }
+        },
+        {
+            new: true // Return the updated document
+        }
+    );
+
+    // Return the updated video in the response
+    return res.status(200).json(new ApiResponse(200, updatedVideo, "Video updated successfully"));
+})
+
+export {uploadVideo, getVideoById, getAllVideos, updateVideoDetails}
