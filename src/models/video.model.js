@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import  jwt from "jsonwebtoken";
+import  jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
 const videoSchema=new Schema({
@@ -38,7 +38,6 @@ const videoSchema=new Schema({
         ref:"User"
     }
 },{timestamps:true})
-
 
 videoSchema.plugin(mongooseAggregatePaginate)
 

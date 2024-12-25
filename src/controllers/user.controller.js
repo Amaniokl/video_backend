@@ -4,10 +4,8 @@ import { ApiError } from '../utils/ApiError.js'
 import { User } from '../models/user.model.js'
 import { uploadOnCloudinary } from '../utils/cloudinary.js'
 import { ApiResponse } from "../utils/ApiResponse.js"
-import { jwt } from "jsonwebtoken"
+import jwt from "jsonwebtoken"
 
-// import { generateAccessTokens } from "../models/user.model.js"
-// import { generateRefreshTokens } from "../models/user.model.js"
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -97,7 +95,6 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 const loginUser = asyncHandler(async (req, res) => {
-
     //recieve data from body
     const { username, password, email } = req.body
 
@@ -275,7 +272,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     }
     const avatar = await uploadOnCloudinary(avatarLocalPath)
 
-    if (avatar.url) {
+    if (!avatar.url) {
         throw new ApiError(400, "Error while uploading on avatar")
     }
     const user = User.findByIdAndUpdate(
