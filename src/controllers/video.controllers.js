@@ -11,11 +11,11 @@ const uploadVideo= asyncHandler(async(req,res)=>{
     console.log(req.user._id)
     //accept title and description and validate
     const {title, description}=req.body
-    if(title==="" || !description===""){
+    if(title==="" || description===""){
         throw new ApiError(400, "Title and description are required")
     }
 
-    //accept and check thumbnail 
+    //accept and validate thumbnail 
     const thumbnailLocalPath = await req.files?.thumbnail[0]?.path;
     console.log(thumbnailLocalPath)
     if(!thumbnailLocalPath){
@@ -63,15 +63,34 @@ const getVideoById=asyncHandler(async(req,res)=>{
     if(!video){
         throw new ApiError(404, "Video not found!!")
     }
-    console.log(video);
+    // console.log(video);
     res
     .status(200)
     .json(new ApiResponse(200, video, "Video by Id"))
 })
 
 const getAllVideos=asyncHandler(async(req,res)=>{
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
-
+    const { page = 1, limit = 10, query, sortBy='createdAt', sortType='desc' } = req.query
+    const pageNumber=parseInt(page);
+    const limitNumber=parseInt(limit);
+    const skip=(pageNumber-1)*limitNumber;
+    const videos=await Video.find()
+        .select('title description videoFile thumbnail duration')
+        .sort({sortBy: sortType==='asc'? 1: -1})
+        .skip(skip)
+        .limit(limitNumber)
+        .lean()
+        if(!videos){
+            throw new ApiError(400, "Videos not available");
+        }
+        console.log(videos); // Log the video object to inspect its structure
+    const totalVideos= await Video.countDocuments();
+    return res.status(200).json(new ApiResponse(200, {
+        videos,
+        total: totalVideos,
+        page: pageNumber,
+        limit:limitNumber
+    }, "Videos retrieved successfully"))
 })
 
 const updateVideoDetails = asyncHandler(async (req, res) => {
@@ -124,6 +143,15 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
 
     // Return the updated video in the response
     return res.status(200).json(new ApiResponse(200, updatedVideo, "Video updated successfully"));
+})
+
+const deleteVideo = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+    //TODO: delete video
+})
+
+const togglePublishStatus = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
 })
 
 export {uploadVideo, getVideoById, getAllVideos, updateVideoDetails}

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploadVideo, getVideoById, updateVideoDetails } from "../controllers/video.controllers.js";
+import { uploadVideo, getVideoById, updateVideoDetails, getAllVideos } from "../controllers/video.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -21,6 +21,8 @@ router.route("/video-upload").post(
 )
 
 router.route("/VideoId/:videoId").get(getVideoById)
+
+router.route("/allVideos").get(getAllVideos)
 
 router.route("/VideoId/:videoId").post(
     upload.fields([
