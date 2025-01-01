@@ -22,7 +22,7 @@ router.route("/video-upload").post(
 
 router.route("/VideoId/:videoId").get(getVideoById)
 
-router.route("/allVideos").get(getAllVideos)
+router.route("/allVideos").get(verifyJWT, getAllVideos)
 
 router.route("/delete/:videoId").delete(verifyJWT, deleteVideo)
 

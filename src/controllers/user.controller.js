@@ -38,11 +38,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // get user details from frontend
     const { fullName, email, username, password } = req.body
-    console.log("email: ", email);
+    // console.log("email: ", email);
 
     // validation - not empty
     if (fullName === "" || email === "" || username === "" || password === "") {
-        throw new ApiError(400, "All fields is required !!")
+        throw new ApiError(400, "All fields are required !!")
     }
 
     // check if user already registered: username, email
@@ -52,7 +52,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (existedUser) {
         throw new ApiError(409, "User with email or username already exists")
     }
-
+    // console.log(req.files)
     // check for images, check for avatar
     const avatarLocalPath = req.files?.avatar[0]?.path;
     // const coverImageLocalPath=req.files?.coverImage[0]?.path;
@@ -97,7 +97,8 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
     //recieve data from body
     const { username, password, email } = req.body
-
+    // console.log(req.body);
+    
     //validate username and password
     if (username === "" && email == "") {
         throw new ApiError(400, "Username or password is required");
