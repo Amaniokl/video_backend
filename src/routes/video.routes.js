@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploadVideo, getVideoById, updateVideoDetails, getAllVideos } from "../controllers/video.controllers.js";
+import { uploadVideo, getVideoById, updateVideoDetails, getAllVideos, deleteVideo, togglePublishStatus } from "../controllers/video.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -24,6 +24,8 @@ router.route("/VideoId/:videoId").get(getVideoById)
 
 router.route("/allVideos").get(getAllVideos)
 
+router.route("/delete/:videoId").delete(verifyJWT, deleteVideo)
+
 router.route("/VideoId/:videoId").post(
     upload.fields([
     {
@@ -38,6 +40,7 @@ router.route("/VideoId/:videoId").post(
     verifyJWT,
     updateVideoDetails
 )
+router.route("/tooglePublish/:videoId").post(verifyJWT, togglePublishStatus)
 //secured routes
 // router.route("/logout").post(verifyJWT, logoutUser)
 // router.route("/refresh-token").post(refreshAccessToken)

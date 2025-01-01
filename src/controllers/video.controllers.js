@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken"
 
 const uploadVideo= asyncHandler(async(req,res)=>{
     console.log(req.user._id)
+
     //accept title and description and validate
     const {title, description}=req.body
     if(title==="" || description===""){
@@ -16,17 +17,18 @@ const uploadVideo= asyncHandler(async(req,res)=>{
     }
 
     //accept and validate thumbnail 
-    const thumbnailLocalPath = await req.files?.thumbnail[0]?.path;
-    console.log(thumbnailLocalPath)
-    if(!thumbnailLocalPath){
-        throw new ApiError(400, "Thumbnail is required")
+    console.log(req.files);
+    
+    if (!req.files || !req.files.thumbnail || req.files.thumbnail.length === 0) {
+        throw new ApiError(401, "Thumbnail is required");
     }
+    const thumbnailLocalPath = req.files.thumbnail[0].path;
 
     //accept the path of video from the body
-    const videoLocalPath = req.files?.video[0]?.path;
-    if(!videoLocalPath){
-        throw new ApiError(400, "Video is required")
+    if (!req.files || !req.files.video || req.files.video.length === 0) {
+        throw new ApiError(400, "Video is required");
     }
+    const videoLocalPath = req.files.video[0].path;
 
     //upload the video and thumbnail on cloudinary
     const video = await uploadOnCloudinary(videoLocalPath)
@@ -63,7 +65,7 @@ const getVideoById=asyncHandler(async(req,res)=>{
     if(!video){
         throw new ApiError(404, "Video not found!!")
     }
-    // console.log(video);
+    console.log(video);
     res
     .status(200)
     .json(new ApiResponse(200, video, "Video by Id"))
@@ -147,11 +149,39 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
 
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: delete video
+    // if(!videoId){
+    //     throw new ApiError(400, "Video not available")
+    // }
+    const video= await Video.findByIdAndDelete(videoId);
+    if(!video){
+        throw new ApiError(400, "Video not available");
+    }
+    return res.status(200).json(new ApiResponse(200, video, "Video deleted successfully"));
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
+    const video=await Video.findById(videoId)
+    if(!video){
+        throw new ApiError(400, "Video not found")
+    }
+    const newVideo=await Video.findByIdAndUpdate(
+        videoId, 
+        {
+            isPublished: !video.isPublished
+        },
+        {
+            new: true
+        }
+    )
+    return res.status(200).json(new ApiResponse(200, newVideo, "Video publish status toggled successfully"))
 })
 
-export {uploadVideo, getVideoById, getAllVideos, updateVideoDetails}
+export {
+    uploadVideo, 
+    getVideoById, 
+    getAllVideos, 
+    updateVideoDetails, 
+    deleteVideo, 
+    togglePublishStatus
+}
