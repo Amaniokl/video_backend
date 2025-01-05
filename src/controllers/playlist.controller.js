@@ -268,7 +268,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
         if (!(playList.owner).equals(req.user?._id)) {
             throw new ApiError(
                 400,
-                "You cannot add vod in this playlist"
+                "You cannot add video in this playlist"
             )
         }
         const found = (playList.videos).filter(video => video.toString() === videoId)
