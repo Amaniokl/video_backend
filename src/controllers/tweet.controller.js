@@ -10,8 +10,8 @@ import { Tweet } from "../models/tweet.model.js"
 const uploadTweet = asyncHandler(async (req, res) => {
     const { content } = req.body;
     const user = req.user._id;
-    console.log(req.body);
-    console.log(content);
+    // console.log(req.body);
+    // console.log(content);
 
     if (!content) {
         throw new ApiError(400, "Write some text to tweet");
