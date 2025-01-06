@@ -155,7 +155,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
         const findedPlaylist = await Playlist.aggregate([
             {
                 $match:{
-                    _id:new mongoose.Types.ObjectId(playlistId)
+                    _id: playlistId
                 }
             },
             {
@@ -450,6 +450,8 @@ const updatePlaylist = asyncHandler(async (req, res) => {
         )
     )
 })
+
+
 
 export {
     createPlaylist,
