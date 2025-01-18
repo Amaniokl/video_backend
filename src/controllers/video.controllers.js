@@ -15,7 +15,6 @@ const uploadVideo= asyncHandler(async(req,res)=>{
     if(title==="" || description===""){
         throw new ApiError(400, "Title and description are required")
     }
-
     //accept and validate thumbnail 
     console.log(req.files);
     
