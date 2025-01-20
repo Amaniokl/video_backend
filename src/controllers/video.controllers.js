@@ -16,7 +16,7 @@ const uploadVideo= asyncHandler(async(req,res)=>{
         throw new ApiError(400, "Title and description are required")
     }
     //accept and validate thumbnail 
-    console.log(req.files);
+    // console.log(req.files);
     
     if (!req.files || !req.files.thumbnail || req.files.thumbnail.length === 0) {
         throw new ApiError(401, "Thumbnail is required");
@@ -84,7 +84,7 @@ const getAllVideos=asyncHandler(async(req,res)=>{
         if(!videos){
             throw new ApiError(400, "Videos not available");
         }
-        console.log(videos); // Log the video object to inspect its structure
+        // console.log(videos); // Log the video object to inspect its structure
     const totalVideos= await Video.countDocuments();
     return res.status(200).json(new ApiResponse(200, {
         videos,

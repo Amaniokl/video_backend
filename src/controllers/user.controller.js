@@ -257,7 +257,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     if (fullName == "" || email == "") {
         throw new ApiError(400, "Requires both field")
     }
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
@@ -266,11 +266,16 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
             }
         },
         { new: true }
-    ).select("-password")
-
+    ).select("-password");
+    // const retObject={
+    //     id: user._id,
+    //     fullName: user.fullName,
+    //     email: user.email,
+    // }
+    // console.log(retObject);
     return res
         .status(200)
-        .json(new ApiResponse(200, user, "Details updated successfully"))
+        .json(new ApiResponse(200, user,"Details updated successfully"))
 })
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
@@ -330,14 +335,16 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 })
 
 const getUserChannelProfile= asyncHandler(async(req,res)=>{
-    const {username}=req.params
-    if(!username){
-        throw new ApiError(400, "Username is missing")
+    const {username} = req.params
+
+    if (!username?.trim()) {
+        throw new ApiError(400, "username is missing")
     }
-    const channel= await User.aggregate([
+
+    const channel = await User.aggregate([
         {
             $match: {
-                username:username.toLowercase()
+                username: username?.toLowerCase()
             }
         },
         {
@@ -387,6 +394,7 @@ const getUserChannelProfile= asyncHandler(async(req,res)=>{
             }
         }
     ])
+
     if (!channel?.length) {
         throw new ApiError(404, "channel does not exists")
     }
@@ -399,7 +407,7 @@ const getUserChannelProfile= asyncHandler(async(req,res)=>{
 })
 
 const getWatchHistory= asyncHandler(async(req,res)=>{
-    const user=await User.aggregate(
+    const user=await User.aggregate([
         {
             $match: {
                 _id: req.user._id
@@ -439,7 +447,7 @@ const getWatchHistory= asyncHandler(async(req,res)=>{
                 }
             }
         }
-    )
+    ])
 
     return res.status(200).json(new ApiResponse(200, 
         user[0].watchHistory,

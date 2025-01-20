@@ -52,7 +52,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
             [
                 {
                     $match:{
-                        owner: userId
+                        owner: new mongoose.Types.ObjectId(userId)
                     }
                 },
                 {
@@ -145,7 +145,8 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 
 const getPlaylistById = asyncHandler(async (req, res) => {
         const {playlistId} = req.params
-      
+        console.log(playlistId);
+        
         if (!isValidObjectId(playlistId)) {
             throw new ApiError(
                 400,
@@ -154,8 +155,8 @@ const getPlaylistById = asyncHandler(async (req, res) => {
         }
         const findedPlaylist = await Playlist.aggregate([
             {
-                $match:{
-                    _id: playlistId
+                $match: {
+                    _id: new mongoose.Types.ObjectId(playlistId)
                 }
             },
             {
