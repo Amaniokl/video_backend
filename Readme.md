@@ -174,6 +174,3 @@ Controllers handle the business logic for each route. They interact with the mod
 
 Routes define the API endpoints and map them to the corresponding controller functions.
 
-## License
-
-This project is licensed under the MIT License.
