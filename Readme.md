@@ -2,7 +2,7 @@
 -Link for backend data model 
 -[Model Link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
 
-# Video Backend API
+# CloudStream API
 
 This project is a backend API for a video platform, built using Node.js, Express, and MongoDB. It provides various functionalities such as user authentication, video management, comments, likes, playlists, and subscriptions.
 I have also used third party service cloudinary to store videos and photos.
